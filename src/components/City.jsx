@@ -12,7 +12,8 @@ const CityList = ({ cities, weatherData, onSelectCity }) => {
         {cities.map((city, index) => {
           // Check if the city is in the weatherData array
           const cityInWeatherData = weatherData.some(
-            (data) => data.city.toLowerCase() === city.toLowerCase()
+            (data) => typeof data.city === 'string' &&
+            data.city.toLowerCase() === city.toLowerCase()
           );
 
           return (
