@@ -5,8 +5,9 @@ const Search = ({ onSearch, cities, setSearchQuery }) => {
   const [localSearchQuery, setLocalSearchQuery] = useState("");
 
   const handleSearch = () => {
+    let lowerCaseSearch = localSearchQuery.toLowerCase();
     const filteredCities = cities.filter(
-      (city) => city.toLowerCase().includes(localSearchQuery.toLowerCase()) // Case-insensitive matching
+      (city) => city.toLowerCase().includes(lowerCaseSearch)
     );
 
     if (localSearchQuery===""|| filteredCities.length === 0) {
@@ -14,8 +15,8 @@ const Search = ({ onSearch, cities, setSearchQuery }) => {
         return;
       }
 
-    setSearchQuery(filteredCities);
-    onSearch(filteredCities);
+    setSearchQuery(localSearchQuery);
+    onSearch(localSearchQuery);
     setLocalSearchQuery("");
   };
 
