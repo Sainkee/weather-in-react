@@ -10,6 +10,9 @@ const App = () => {
   const [highlightedCity, setHighlightedCity] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
 
+  // Preprocessed city names for comparison
+  const cityNames = weatherData.map((data) => data.city.toLowerCase());
+
   // Function to fetch weather data for a specific city
   const fetchWeather = async (city) => {
     try {
@@ -19,7 +22,7 @@ const App = () => {
       const data = await response.json();
       console.log(data);
 
-      const dataAge = (Date.now() - new Date(data.date_and_time).getTime()) / (1000 * 60 * 60);  // Calculate age in hours
+      const dataAge = (Date.now() - new Date(data.date_and_time).getTime()) / (1000 * 60 * 60); // Calculate age in hours
 
       const weatherDetails = {
         city,
@@ -29,7 +32,7 @@ const App = () => {
         dataAge: dataAge.toFixed(2),
       };
       setWeatherData((prev) => [...prev, weatherDetails]);
-      setHighlightedCity(city);  // Update highlighted city
+      setHighlightedCity(city); // Update highlighted city
     } catch (error) {
       console.error('Error fetching weather:', error);
     }
@@ -38,35 +41,33 @@ const App = () => {
   // Function to handle clicking the "Get Weather" button
   const handleSearchText = () => {
     if (selectedCity) {
-      const cityExists = weatherData.some(
-        (data) => data.city.toLowerCase() === selectedCity.toLowerCase()
-      );
-
-      if (!cityExists) {
+      if (!cityNames.includes(selectedCity.toLowerCase())) {
         fetchWeather(selectedCity);
       }
     }
   };
 
   const handleSearch = (searchCity) => {
+
+    const loweredCase = cities.filter(city => city.toLowerCase()===searchCity.toLowerCase())
+    const loweredCaseCity = loweredCase[0] || '';
+
     setSearchQuery(searchCity);
     setSelectedCity(searchCity);
-    setHighlightedCity(searchCity);  // Highlight the city when search is triggered
+    setHighlightedCity(searchCity);
+
+    console.log(typeof searchCity);
 
     // Check if the city already has weather data, if not, fetch new data
-    const cityExists = weatherData.some(
-      (data) => data.city.toLowerCase() === searchCity.toLowerCase()
-    );
-
-    if (!cityExists) {
-      fetchWeather(searchCity);  // Fetch weather data if not already present
+    if (!cityNames.includes(searchCity.toLowerCase())) {
+      fetchWeather(loweredCaseCity); 
     }
   };
 
   const handleCitySelect = (city) => {
     setSelectedCity(city);
     setSearchQuery(city);
-    setHighlightedCity(city);  // Highlight city when selected from list
+    setHighlightedCity(city); // Highlight city when selected from list
   };
 
   return (
@@ -89,7 +90,7 @@ const App = () => {
           cities={cities}
           weatherData={weatherData}
           onSelectCity={handleCitySelect}
-          highlightedCity={highlightedCity}  // Pass highlightedCity to CityList
+          highlightedCity={highlightedCity} // Pass highlightedCity to CityList
         />
         <span className="overflow-scroll w-full">
           <WeatherDetails
